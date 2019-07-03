@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>易店 |后台管理</title>
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="bower_components/Ionicons/css/ionicons.min.css">
+  <link rel="stylesheet" href="dist/css/AdminLTE.min.css">
+  <link rel="stylesheet" href="dist/css/skins/skin-purple.css">
+  <link rel="stylesheet" href="bower_components/layer/skin/default/layer.css">
+  <link rel="stylesheet" href="bower_components/ztree/css/metroStyle/metroStyle.css"/>
+  <link rel="stylesheet" href="bower_components/treegrid/jquery.treegrid.css"/>
+
+
+  <style type="text/css">
+  	a:hover{
+  		cursor: pointer;
+  	}
+  	
+  </style>
+  
+</head>
+<body class="hold-transition skin-purple layout-boxed ">
+<audio src="sound/dingdong.mp3" id="audio" style="visibility: hidden;"></audio>
+<div class="wrapper">
+
+  <!-- Main Header -->
+  <header class="main-header">
+
+    <!-- Logo -->
+    <a href="index2.html" class="logo">
+      <span class="logo-mini">易 店 系 统</span>
+      <span class="logo-lg">易 店 系 统</span>
+    </a>
+
+    <nav class="navbar navbar-static-top" role="navigation">
+      <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
+        <span class="sr-only">Toggle navigation</span>
+      </a>
+      <div class="navbar-custom-menu">
+        <ul class="nav navbar-nav">
+          <li class="dropdown messages-menu">
+          </li>
+          <li class="dropdown notifications-menu">
+          </li>
+          <li class="dropdown tasks-menu"></li>
+          
+          <li class="dropdown user user-menu">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              <img src="dist/img/user01.jpg" class="user-image" alt="User Image">
+              <span class="hidden-xs">这里显示用户名</span>
+            </a>
+            <ul class="dropdown-menu">
+              <!-- The user image in the menu -->
+              <li class="user-header">
+                <img src="dist/img/user01.jpg" class="img-circle" alt="User Image">
+
+                <p class="hidden-xs">这里显示用户名 <p class="role">这里显示角色名</p>
+                </p>
+              </li>
+              <!-- Menu Body -->
+              <li class="user-body">
+                <div class="row">
+                  <div class="col-xs-4 text-center">
+                    <a href="#">扩展功能</a>
+                  </div>
+                  <div class="col-xs-4 text-center">
+                    <a href="#">扩展功能</a>
+                  </div>
+                  <div class="col-xs-4 text-center">
+                    <a href="#">扩展功能</a>
+                  </div>
+                </div>
+                <!-- /.row -->
+              </li>
+              <!-- Menu Footer-->
+              <li class="user-footer">
+                <div class="pull-left">
+                  <a href="#" class="btn btn-default btn-flat">个人中心</a>
+                </div>
+                <div class="pull-right">
+                  <a href="doLogout" class="btn btn-default btn-sign-out">注 销</a>
+                </div>
+              </li>
+            </ul>
+          </li>
+          <!-- Control Sidebar Toggle Button -->
+          <li>
+            <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+  <!-- Left side column. contains the logo and sidebar -->
+  <aside class="main-sidebar">
+
+    <!-- sidebar: style can be found in sidebar.less -->
+    <section class="sidebar">
+
+      <!-- Sidebar user panel (optional) -->
+      <div class="user-panel">
+        <div class="pull-left image">
+          <img src="dist/img/user01.jpg" class="img-circle" alt="User Image">
+        </div>
+        <div class="pull-left info">
+          <p class="hidden-xs">这里显示用户名</p>
+          <!-- Status -->
+          <a href="#"><i class="fa fa-circle text-success"></i>在线</a>
+        </div>
+      </div>
+
+
+      <!-- Sidebar Menu -->
+      <ul class="sidebar-menu" data-widget="tree">
+        <li class="header">HEADER</li>
+        <!-- Optionally, you can add icons to the links -->
+        <li class="active">
+        <a href="#"><i class="fa fa-link"></i> 
+        <span>更多功能尽情期待</span></a></li>        
+        
+        <!-- 系统管理 -->
+        <li class="treeview">
+          <a href="#"><i class="fa fa-link"></i> 
+          <span>系统管理</span>
+            <span class="pull-right-container">
+                <i class="fa fa-angle-left pull-right"></i>
+              </span>
+          </a>
+          <ul class="treeview-menu">
+            <li><a id="load-menu-id">菜单管理</a></li>
+            <li><a id="load-emp-id">员工管理</a></li>
+            <li><a id="load-role-id">角色管理</a></li>
+            <li><a id="load-table-id">桌位管理</a></li>
+            <li><a id="load-gong-id">功能管理</a></li>
+            <li><a id="load-log-id"> 日志管理</a></li>
+          </ul>
+        </li>
+        
+        <!-- 订单管理 -->
+        <li class="treeview">
+        	<a href="#"><i class="fa fa-link"></i> 
+          		<span class="orderState">订单管理</span>
+            	<span class="pull-right-container">
+                	<i class="fa fa-angle-left pull-right"></i>
+            	</span>
+          	</a>
+          	<ul class="treeview-menu">
+            	<li><a id="load-order-processed"> 已处理</a></li>
+            	<li>
+            		<a id="load-order-untreated" style="display: inline-block;"> 未处理</a>
+            		<span style="color:red;display: inline-block;" class="weichuli">●</span>
+            	</li>
+          	</ul>
+        </li>
+      </ul>
+      <!-- /.sidebar-menu -->
+    </section>
+  
+    <!-- /.sidebar -->
+  </aside>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1 id="module">
+                   显示对应模块
+        <small>功能 模块 </small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Level</a></li>
+        <li class="active">Here</li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section id="mainContentId" class="content container-fluid">
+
+     
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+  <!-- Main Footer -->
+  <footer class="main-footer">
+    <!-- To the right -->
+    <div class="pull-right ">
+      Anything you want
+    </div>
+    <!-- Default to the left -->
+    <strong>Copyright &copy; 2019 <a href="#">爆胎小组</a>.</strong> All rights reserved.
+  </footer>
+
+  <!-- Control Sidebar -->
+  <aside class="control-sidebar control-sidebar-dark">
+    <!-- Create the tabs -->
+    <ul class="nav nav-tabs nav-justified control-sidebar-tabs">
+      <li class="active"><a href="#control-sidebar-home-tab" data-toggle="tab"><i class="fa fa-home"></i></a></li>
+      <li class="set"><a href="#control-sidebar-settings-tab" data-toggle="tab"><i class="fa fa-gears"></i></a></li>
+    </ul>
+    <!-- Tab panes -->
+    <div class="tab-content">
+      <!-- Home tab content -->
+      <div class="tab-pane active" id="control-sidebar-home-tab">
+        <h3 class="control-sidebar-heading">Recent Activity</h3>
+        <ul class="control-sidebar-menu">
+          <li>
+            <a href="javascript:;">
+              <i class="menu-icon fa fa-birthday-cake bg-red"></i>
+              <div class="menu-info">
+                <h4 class="control-sidebar-subheading">Langdon's Birthday</h4>
+                <p>Will be 23 on April 24th</p>
+              </div>
+            </a>
+          </li>
+        </ul>
+        <!-- /.control-sidebar-menu -->
+
+        <h3 class="control-sidebar-heading">Tasks Progress</h3>
+        <ul class="control-sidebar-menu">
+          <li>
+            <a href="javascript:;">
+              <h4 class="control-sidebar-subheading">
+                Custom Template Design
+                <span class="pull-right-container">
+                    <span class="label label-danger pull-right">70%</span>
+                  </span>
+              </h4>
+
+              <div class="progress progress-xxs">
+                <div class="progress-bar progress-bar-danger" style="width: 70%"></div>
+              </div>
+            </a>
+          </li>
+        </ul>
+        <!-- /.control-sidebar-menu -->
+
+      </div>
+      <!-- /.tab-pane -->
+      <!-- Stats tab content -->
+      <div class="tab-pane" id="control-sidebar-stats-tab">Stats Tab Content</div>
+      <!-- /.tab-pane -->
+      <!-- Settings tab content -->
+      <div class="tab-pane" id="control-sidebar-settings-tab">
+        <form method="post">
+          <h3 class="control-sidebar-heading">General Settings</h3>
+
+          <div class="form-group">
+            <label class="control-sidebar-subheading">
+              Report panel usage
+              <input type="checkbox" class="pull-right" checked>
+            </label>
+
+            <p>
+              Some information about this general settings option
+            </p>
+          </div>
+          <!-- /.form-group -->
+        </form>
+      </div>
+      <!-- /.tab-pane -->
+    </div>
+  </aside>
+  <div class="control-sidebar-bg"></div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+      </div>
+      <div class="modal-body">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary btn-save">Save changes</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<!-- ./wrapper -->
+
+<!-- REQUIRED JS SCRIPTS -->
+
+<!-- jQuery 3 -->
+<script src="bower_components/jquery/dist/jquery.min.js"></script>
+<!-- Bootstrap 3.3.7 -->
+<script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<!-- AdminLTE App -->
+<script src="dist/js/adminlte.min.js"></script>
+<script type="text/javascript">
+   $(function(){ 
+   
+	  $("#mainContentId").load("menu/doMenuListUI");
+	  doLoadUI("load-log-id","log/doLogListUI");//日志
+	  doLoadUI("load-menu-id","menu/doMenuListUI");//菜单
+	  //doLoadUI("load-order-id","order/doOrderListUI");//订单
+	  doLoadUI("load-table-id","table/doTableListUI");//桌位
+	  doLoadUI("load-role-id","role/doRoleListUI");//角色
+	  doLoadUI("load-emp-id","emp/doEmpListUI");//员工
+	  doLoadUI("load-gong-id","funmenu/doFunmenuListUI");
+	  
+	  //如果已处理订单被点击，给thisState状态为1
+	  $("#load-order-processed").click(function(){
+	  	$(".orderState").data("thisState",1); 
+	  	$("#mainContentId").load("order/doOrderListUI")
+	  })
+	  //如果订单管理或者未处理订单被点击，给thisState状态为0
+	  $("#load-order-untreated").click(function(){
+	  	$(".weichuli").hide();
+	  	$(".orderState").data("thisState",0); 
+	  	$("#mainContentId").load("order/doOrderListUI")
+	  })
+	  
+	  $(".weichuli").hide();
+	  /*   webSocket   */
+	  var websocket = null;
+	  //判断浏览器是否支持websocket
+	  if('WebSocket' in window){
+	  	websocket = new WebSocket("ws://localhost/websocket");
+	  }else{
+	  	console.log("当前浏览器不支持websocket");
+	  }
+	  
+	  //建立连接
+	  websocket.onopen = function(even){
+	  	console.log("成功与服务器建立连接！");
+	  }
+	  
+	  websocket.onclose = function(even){
+	  	console.log("与服务器断开连接！")
+	  }
+	  
+	  websocket.onmessage = function(even){
+	  	//console.log(even.data);
+	  	playSound();   //谷歌浏览器不能播放声音时  打开chrome://flags/#autoplay-policy ，在auto policy中选择 no user gesture is required
+	  	setTimeout(function() {
+	  		alert("您有新的订单！");
+	  	}, 2000);//延迟2秒
+	  	
+	  	$(".weichuli").show();
+	  	
+	  	
+	  }
+	  
+	  websocket.onerror = function(){
+	  	console.log("通信错误！")
+	  }
+	  
+	  //浏览器关闭
+	  window.onbeforeunload = function (){
+	  	websocket.close();
+	  }
+	  
+	  //播放声音
+	  function playSound(){
+	  	document.getElementById("audio").play();
+	  }
+	  
+	  /**socket结束*/
+	  
+	  //获取登录用户名
+	  	$.get("emp/getUserName",function(result){
+	  		$(".hidden-xs").html(result);
+	  	})
+	  	
+	  	
+   });
+   function doLoadUI(id,url){
+	   $("#"+id).click(function(){
+			  //load函数是将url对应的资源加载到指定位置
+		  $("#mainContentId").load(url);
+	   });  
+   }
+</script>
+</body>
+</html>

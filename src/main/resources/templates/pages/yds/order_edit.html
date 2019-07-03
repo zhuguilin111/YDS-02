@@ -1,0 +1,123 @@
+<!-- Horizontal Form -->
+ <div class="box box-info">
+      <div class="box-header with-border">
+        <h3 class="box-title">添加角色</h3>
+      </div>
+      <!-- /.box-header -->
+      <!-- form start -->
+      <form class="form-horizontal">
+        <div class="box-body">
+        
+          <div class="form-group">
+            <label for="tableId" class="col-sm-2 control-label">桌位号</label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control" name="tableId" id="tableId" placeholder="桌位号">
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="content" class="col-sm-2 control-label">订单内容</label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control" name="content" id="content" placeholder="订单内容">
+            </div>
+          </div>
+          
+          <div class="form-group">
+				<label class="col-sm-2 control-label">总金额￥</label>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" name="total" id="total" placeholder="总金额">
+				</div>
+		  </div>
+
+			<div class="form-group">
+				<label for="payType" class="col-sm-2 control-label">支付方式</label>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" name="payType" id="payType" placeholder="支付方式">
+				</div>
+			</div>
+
+		</div>
+        <!-- /.box-body -->
+        <div class="box-footer">
+          <button type="button" class="btn btn-default btn-cancel">取消</button>
+          <button type="button" class="btn btn-info pull-right btn-save">保存</button>
+        </div>
+        <!-- /.box-footer -->
+      </form>
+    </div>
+    <script type="text/javascript" src="bower_components/ztree/jquery.ztree.all.min.js"></script>
+    <script type="text/javascript">
+    $(function(){
+    	//异步加载菜单信息,初始化页面菜单
+    	doInitEditFormData();
+    	$(".box-footer")
+    	.on("click",".btn-save",doSaveOrUpdate)
+    	.on("click",".btn-cancel",doCancel);
+    	
+    });
+    
+    //往输入
+    function doInitEditFormData(){ 	
+    	var rowData=$("#mainContentId").data("data");
+    	if(!rowData)return; //rowData 为空，则说明是通过点击添加操作进入的此页面的，不需要取订单信息
+    	console.log("data",rowData);
+    	//1.初始化角色自身信息
+    	$("#tableId").val(rowData.tableId);
+    	$("#content").val(rowData.content);
+    	$("#total").val(rowData.total);
+    	$("#payType").val(rowData.payType);
+    }
+    function doCancel(){
+    	var url="order/doOrderListUI";
+    	$("#mainContentId")
+    	.load(url,function(){
+    	  $("#mainContentId").removeData();
+    	});
+    }
+    
+    function doSaveOrUpdate(){
+    	//1.参数(表单数据)
+    	var params=doGetEditFormData();
+    	if(!params.tableId){
+    		alert("桌位号不能为空!");
+    		return;
+    	}
+    	var data=$("#mainContentId").data("data");
+    	if(data)params.id=data.id;
+    	//2.url
+    	var insertUrl="order/doInsertObject";
+    	var updateUrl="order/doUpdateObject";
+    	var url=data?updateUrl:insertUrl;
+    	//3.ajax request
+    	$.post(url,params,function(result){
+    		if(result.state==1){
+    		   alert(result.message);
+    		   doCancel();
+    		}else{
+    		   alert(result.message);
+    		}
+    	})
+    }
+    
+  //获取输入框信息
+    function doGetEditFormData(){
+    	//1.获取角色自身信息
+    	var params={
+    		tableId:$("#tableId").val(),
+    		content:$("#content").val(),
+    		total:$("#total").val(),
+    		payType:$("#payType").val()
+    	}
+    	//2.获取选中菜单信息
+    	return params;
+    }
+
+</script>
+    
+    
+    
+    
+    
+    
+    
+    

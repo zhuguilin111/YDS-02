@@ -1,0 +1,286 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>易店 |订餐购物车</title>
+<!-- jQuery 3 -->
+<script src="bower_components/jquery/dist/jquery.min.js"></script>
+<!-- Bootstrap 3.3.7 -->
+<script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
+<script src="dist/js/adminlte.min.js"></script>
+<link rel="stylesheet" href="dist/menu.css">
+</head>
+
+<body>
+
+
+<div class="big-bg">
+
+
+    <div class="bg">
+        <div class="area">
+            当前桌号:<span id="table"></span>号　
+            区域 :<span id="area"></span>
+            <br>
+            <div class="search-div">
+                <input type="text" placeholder="搜索菜名" id="searchMenuId" style="width: 150px"><span class="search btn-search">搜索</span>
+            </div>
+        </div>
+        <ul id="myTab" class="nav nav-tabs">
+        </ul>
+        <div id="myTabContent" class="tab-content">
+        </div>
+        <div class="yidian">
+            <div style="margin-top: 5px;margin-bottom: 30px">
+                　已点<span class="orderNum">0</span>单，总计 ￥<span class="moneyAll">0</span>
+                <br>
+                <p class="orderXq"></p>
+
+            </div>
+            <div class="input-group">
+                <input type="button" class="btn btn-warning btn-sm" value="清空" id="btnEmpty">　
+                <input type="button" class="btn btn-success btn-sm" value="提交" id="btnselect">
+            </div>
+        </div>
+
+
+    </div>
+</div>
+	<!-- bg -->
+
+
+
+	<script type="text/javascript" src="dist/js/jquery.min.js"></script>
+	<script type="text/javascript">
+		$(function() {
+			doCheckTable(); //获取到当前桌子号
+			$("#btnselect").click(doSubmit); //结算点击
+            $("#btnEmpty").click(function () {
+                if(confirm("确认清空吗?")){
+                    location.reload();
+                }
+            })
+
+		});
+		
+		$("#searchMenuId").keyup(function (even) {
+            if(even.keyCode==8){
+                let inputContent = $(this).val();
+                if (inputContent.trim()=="" || inputContent ==null){
+                    doGetVarietyObjects();
+                    doGetObjects();
+                }
+            }
+        })
+
+
+		//根据桌子id获取桌号
+        var tableNum = null;
+		function doCheckTable() {
+			let thisUrl = window.location.href; //获取当前页面的url
+			//console.log(thisUrl);
+			let index = thisUrl.lastIndexOf("="); //找到最后一个等号
+			let tableId = thisUrl.substring(index + 1); //截取等号后面的字符串
+			//console.log(tableId);
+			var url = "doCheckTable";
+			let param = {"tableId" : tableId };
+
+			$.getJSON(url, param, function(result) {
+				if (result.state == 1) { //如果当前桌号存在
+					var nowTable = result.data;
+					$("#table").text(nowTable.tabnum);
+					$("#area").text(nowTable.area);
+					tableNum =  nowTable.id; //座位信息存入result(暂时)
+					doGetVarietyObjects();
+					doGetObjects();
+				} else {
+					alert(result.message);
+				}
+			});
+		}
+
+		$(".btn-search").on("click", function() { //搜索点击
+			doGetVarietyObjects(); //查询所有品种
+			doGetObjects(); //获取菜单
+		});
+
+		var orderContent = "";
+
+
+		//=========================查询菜品   开始 =========================
+		function doGetVarietyObjects() {
+			var url = "variety/doGetVarietyObjects";
+			$.getJSON(url, function(result) { //jsonResult
+				doHandleVarietyResult(result);
+			});
+		}
+		//处理服务端返回菜单分类的结果
+		function doHandleVarietyResult(result) {
+			if (result.state == 1) { //呈现数据(主要功能)
+				doSetVarietyRows(result.data);
+			} else {
+				alert(result.message);
+			}
+		}
+		function doSetVarietyRows(data) {
+			let myTab = $("#myTab");
+			myTab.empty();
+			let myTabContent = $("#myTabContent");
+			myTabContent.empty();
+			for (var i = 0; i < data.length; i++) {
+				if (data[i].id == 1) { //如果是第一个 则加上con-active，会默认显示
+					var li  = $("<li class='active'><a href='#"+data[i].id+"' data-toggle='tab'>" + data[i].name + "</a></li>");
+					var div = $("<div class='tab-pane fade in active menu-div' id='"+data[i].id+"'></div>")
+				} else {
+					var li  = $("<li><a href='#"+data[i].id+"' data-toggle='tab'>" + data[i].name + "</a></li>");
+					var div = $("<div class='tab-pane fade menu-div' id='"+data[i].id+"'></div>")
+				}
+				myTab.append(li); //把生成的 带有菜品种类id的 div放入con中
+				myTabContent.append(div);
+
+			}
+			//$(".left-menu li").click(ShowAndHide); //可能是因为Jquery版本问题，动态生成的元素需要再次注册单击事件
+		}
+
+		//=========================查询菜品   结束 =========================
+
+		//查询菜
+		function doGetObjects() {
+			var url = "menu/doFindObjects";
+			var name = $("#searchMenuId").val();
+			var params = {"name" : name};
+            //console.log(params);
+			$.getJSON(url, params, function(result) { //jsonResult
+				doHandleResponseResult(result);
+			});
+		}
+		//处理服务端返回的结果
+		function doHandleResponseResult(result) {
+			if (result.state == 1) { //呈现数据(主要功能)
+				doSetTableBodyRows(result.data);
+			} else {
+				alert(result.message);
+			}
+		}
+		//将记录呈现在相对应的div中
+		function doSetTableBodyRows(data) {
+			//2.将记录records进行呈现
+			//2.1迭代记录集
+			for (var i = 0; i < data.length; i++) {
+				//创建多个li对象
+				var div = $("#"+ data[i].varietyId); //获取和这个菜品 varietyId相对应的div的id
+				//console.log(div);
+				//console.log(div.val());
+				var childDiv = createDiv(data[i]);
+				div.append(childDiv); //把这个菜品放入相对应的div中
+			}
+
+		}
+
+		$("#myTabContent").on("click",".jia",jia);
+		$("#myTabContent").on("click",".jian",jian);
+
+		function createDiv(data){
+			let div = $("<div class='food'>"+
+					"<div class='img-div'>"+
+						"<img src='"+data.src+"'/>"+
+					"</div>"+
+					"<div class='xq-div'>"+
+						"<p class='foodName'><b>"+data.name+"</b></p>"+
+						"<p class='foodNote'>"+data.note+"</p>"+
+						"<p class='foodPrice'>￥ "+data.price+"</p>"+
+					"</div>"+
+					"<div class='add'>"+
+						"<span class='glyphicon glyphicon-minus-sign jian' data-price='"+data.price+"' data-name='"+data.name+"'></span>"+
+						"<span class='number'>0</span>"+
+						"<span class='glyphicon glyphicon-plus-sign jia' data-price='"+data.price+"' data-name='"+data.name+"'></span>"+
+					"</div>"+
+					"</div>");
+			return div;
+		}
+
+		//提交订单
+		function doSubmit() {
+		    if (confirm("确定提交?")) {
+			    var total = $(".moneyAll").html();    //总金额
+			    var tableId = tableNum;   //桌子号
+			    var content = $(".orderXq").html();    //订单内容
+			    var params = {
+				    "total" : total,
+				    "tableId" : tableId,
+				    "content" : content
+			    }
+
+			    //console.log("params", params);
+			    //orderContent = "";
+			    foodArr =[];  //将订单食物清空
+			    $(".main").data("orderContent", orderContent);
+			    //异步提交数据
+			    $.post("order/doInsertObject", params, function(result) {
+				    console.log(result);
+				    if (result.state == 1) {
+					    //alert(result.message);
+                        alert("下单成功,请稍等...");
+					    location.reload();
+				    } else {
+				    	alert(result.message);
+				    }
+			});
+            }
+		}
+
+
+
+		var yidian = $(".orderNum").text();     //已点单的数量数
+		var moneyAll = $(".moneyAll").text();   //总金额
+		//var orderXq = $(".orderXq").text();		//订单详情
+		var foodArr = [];
+		//加被点击
+		function jia(){
+			let num = $(this).prev().text(); //获取到选择的数量
+			//console.log("加被点击");
+			let newNum = parseInt(num) + 1 ;
+			$(this).prev().text(newNum);
+			//获取单价
+			let price = $(this).data("price");
+			yidian = $(".orderNum").text();  //获取已点的数量
+			$(".orderNum").text(parseInt(yidian) + 1);
+			moneyAll = (parseInt(moneyAll) + parseInt(price));
+			$(".moneyAll").text(moneyAll);
+			//获取菜名
+			let foodName = $(this).data("name");
+
+			foodArr.push(foodName);
+			console.log(foodArr);
+			$(".orderXq").text(foodArr);
+			//console.log(orderXq);
+		}
+
+		function jian(){
+			let num = $(this).next().text(); //获取到选择的数量
+			if(parseInt(num)>0){
+				console.log(num);
+				let newNum = parseInt(num) - 1 ;
+				$(this).next().text(newNum);
+				//获取单价
+				let price = $(this).data("price");
+				yidian = $(".orderNum").text();  //获取已点的数量
+				$(".orderNum").text(parseInt(yidian) -1);
+				moneyAll = (parseInt(moneyAll) - parseInt(price));
+				$(".moneyAll").text(moneyAll);
+				//获取菜名
+				let foodName = $(this).data("name");
+				let foodIndex = foodArr.lastIndexOf(foodName); //找到当前元素的位置
+				foodArr.splice(foodIndex,1);
+				//console.log(foodArr);
+				$(".orderXq").text(foodArr);
+				//console.log(orderXq);
+			}
+		}
+	</script>
+</body>
+</html>
+

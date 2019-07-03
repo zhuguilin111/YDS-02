@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yds.order.dao.MenuDao">
+
+	<!-- 定义映射元素(此映射元素解析时会储存到一个MappedStatement对象-VO) -->
+	<!-- select m.name,v.name varietyName from yds_menus m left join yds_variety v on m.varietyId=v.id; -->
+	
+	<!-- 顾客点餐端查询-按条件查询所有 -->
+	<select id="findObjects"
+		resultType="com.yds.order.entity.Menu">
+			select * from yds_menus
+		<include refid="queryWhereId" />
+	</select>
+
+	<!-- 后台管理端分页查询-按条件查询当前页 -->
+	<select id="findPageObjects"
+		resultType="com.yds.order.entity.Menu">
+	select m.*,v.name varietyName from yds_menus m left join yds_variety v on m.varietyId=v.id
+	<where>
+		<if test="name!=null and name!=''">
+			m.name like concat("%",#{name},"%")
+		</if>
+	</where>
+		order by createdTime desc
+		limit #{startIndex},#{pageSize}
+	</select>
+
+	<!-- 统计记录总数 -->
+	<select id="getRowsCount" resultType="int">
+		select count(*) from yds_menus
+		<include refid="queryWhereId" />
+	</select>
+
+	<!-- 借助此元素对共性数据进行提取 -->
+	<sql id="queryWhereId">
+		<where>
+			<if test="name!=null and name!=''">
+				yds_menus.name like concat("%",#{name},"%")
+			</if>
+		</where>
+	</sql>
+	
+	<insert id="insertObject">
+		insert into yds_menus
+		(name,price,varietyId,createdTime,modifiedTime,note,src)
+		values
+		(#{entity.name},#{entity.price},#{entity.varietyId},now(),now(),#{entity.note},#{entity.src})
+	</insert>
+	<update id="updateObject">
+		update yds_menus set 
+		name=#{entity.name},
+		price=#{entity.price},
+		varietyId=#{entity.varietyId},
+		modifiedTime=now(),
+		note=#{entity.note},
+		src=#{entity.src} 
+		where id=#{entity.id}
+	</update>
+
+	<!-- 根据 id订单记录 -->
+	<delete id="deleteObject" parameterType="int">
+		delete
+		from yds_menus
+		where id=#{id}
+	</delete>
+</mapper>

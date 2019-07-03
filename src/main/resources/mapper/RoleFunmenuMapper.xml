@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yds.order.dao.RoleFunmenuDao">
+
+	<insert id="addRoleFunmenu">
+		insert into
+		yds_role_funmenus (role_id,funmenuid)
+		values
+		<foreach collection="funmenuIds" separator=","
+			item="funmenuId">
+			(#{roleId},#{funmenuId})
+		</foreach>
+	</insert>
+
+	<select id="doFindFunmenuByRoleId" resultType="int">
+		select
+		funmenuid
+		from
+		yds_role_funmenus
+		where
+		role_id = #{roleId}
+	</select>
+
+	<delete id="doDeleteObjects">
+		delete from yds_role_funmenus where role_id =
+		#{roleId}
+	</delete>
+
+  	<delete id="deleteObjectsByFunmenuId"
+             parameterType="int">
+          delete from yds_role_funmenus
+          where gong_id=#{funmenuId}
+     </delete>
+</mapper>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yds.order.dao.FunmenuDao">
+	<select id="findObjects" resultType="map">
+		select c.*,p.name parentName
+		from yds_funmenus c left join yds_funmenus p
+		on c.parentId=p.id
+	</select>
+	<select id="getChildCount" resultType="int">
+		select count(*)
+		from yds_funmenus
+		where parentId=#{id}
+	</select>
+	<delete id="deleteObject" parameterType="int">
+		delete from yds_funmenus
+		where id=#{id}
+	</delete>
+	<select id="findZtreeGongNodes"
+		resultType="com.yds.common.vo.Node">
+		select id,name,parentId
+		from yds_funmenus
+
+	</select>
+	<insert id="insertObject">
+		insert into yds_funmenus
+		(name,url,note,parentId,permission,
+		createdTime,modifiedTime,createdUser,modifiedUser)
+		values
+		(#{name},#{url},#{note},#{parentId},#{permission},
+		now(),now(),#{createdUser},#{modifiedUser})
+
+	</insert>
+	<update id="updateObject">
+         update yds_funmenus
+         set
+           name=#{name},
+           note=#{note},
+           url=#{url},
+           parentId=#{parentId},
+           permission=#{permission},
+           modifiedUser=#{modifiedUser},
+           modifiedTime=now()
+        where id=#{id}
+    </update>
+<select id="findZTree" resultType="com.yds.order.entity.Funmenu">
+		select id,name from yds_funmenus
+	</select>
+	<!-- 查询员工授权标识 -->
+	<select id="findPermissions" resultType="String">
+		select permission <!-- sys:user:update -->
+       from yds_funmenus
+       where id in 
+       <foreach collection="array"
+                open="("
+                close=")"
+                separator=","
+                item="item">
+            #{item}
+       </foreach>
+	</select>
+</mapper>

@@ -1,0 +1,295 @@
+<div class="row">
+	<div class="col-xs-12">
+		<div class="box">
+			<div class="box-header">
+				<h3 class="box-title">订单管理</h3>
+
+				<div class="box-tools">
+					<div class="input-group input-group-sm" style="width: 350px;">
+						<input type="text" name="table_search" id="searchTableId"
+							class="form-control pull-right" placeholder="桌位号">
+
+						<div class="input-group-btn">
+							<button type="button" class="btn btn-default btn-search">
+                                <i class="fa fa-search"></i>
+							</button>
+							<button type="button" class="btn btn-success btn-add">添加</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- /.box-header -->
+			<div class="box-body table-responsive no-padding">
+				<form>
+				  <table class="table table-hover">
+					<thead>
+						<tr>
+						    <th>序号</th>
+							<th>桌位号</th>
+							<th>订单内容</th>
+							<th>创建时间</th>
+							<th>总计</th>
+							<th>支付方式</th>
+							<th>操作</th>
+						</tr>
+					</thead>
+					<tbody id="tbodyId">
+					</tbody>
+				  </table>
+				</form>
+			</div>
+			<!-- /.box-body -->
+			<div id="pageId" class="box-footer clearfix">
+            </div>
+		</div>
+		<!-- /.box -->
+	</div>
+</div>
+<script type="text/javascript">
+   $(function(){
+   
+	  //console.log($(".orderState").data("thisState"));
+   	  var orderState = 0 ;
+   	  if($(".orderState").data("thisState")==0){
+   	  		orderState = 0 ;
+	  		doLoadWeichuli(orderState);
+   	  }else if($(".orderState").data("thisState")==1){
+   	  		orderState = 1 ;
+	  		doLoadYichuli(orderState);
+   	  }
+   	  
+	  $(".input-group-btn")
+	  .on("click",".btn-search",doQueryObjects)
+	  .on("click",".btn-add",doLoadEditUI)
+      
+	  $("#tbodyId").on("click",".btn-delete",doDeleteObject)
+	  .on("click",".btn-update",doLoadEditUI).on("click", ".btn-getOrder",getOrder);
+	  
+	  /*   websocket */
+	  var websocket = null;
+	  //判断浏览器是否支持websocket
+	  if('WebSocket' in window){
+	  	websocket = new WebSocket("ws://localhost/websocket");
+	  }else{
+	  	console.log("当前浏览器不支持websocket");
+	  }
+	  
+	  //建立连接
+	  websocket.onopen = function(even){
+	  	console.log("成功与服务器建立连接！");
+	  }
+	  
+	  websocket.onclose = function(even){
+	  	console.log("与服务器断开连接！")
+	  }
+	  
+	  websocket.onmessage = function(even){
+	  	console.log(even.data);
+	  	//playSound();   //谷歌浏览器不能播放声音时  打开chrome://flags/#autoplay-policy ，在auto policy中选择 no user gesture is required
+	  	//setTimeout(function() {
+	  	//	alert("您有新的订单！");
+	  	//}, 2000);//延迟2秒
+	  	$(".orderState").data("thisState",0); 
+	  	//$("#mainContentId").load("order/doOrderListUI");
+	  	doGetObjects(orderState);
+	  	
+	  }
+	  
+	  websocket.onerror = function(){
+	  	console.log("通信错误！")
+	  }
+	  
+	  //浏览器关闭
+	  window.onbeforeunload = function (){
+	  	websocket.close();
+	  }
+	  
+	  //播放声音
+	  function playSound(){
+	  	document.getElementById("audio").play();
+	  }
+   
+   
+   function doLoadYichuli(orderState){
+   		$("#module").text("已处理订单");
+	  	$("#pageId").load("doPageUI",function(){
+	  		//console.log(orderState)
+		  	doGetObjects(orderState);
+	  	});
+   }
+   function doLoadWeichuli(orderState){
+   		$("#module").text("未处理订单");
+	  	$("#pageId").load("doPageUI",function(){
+	  		//console.log(orderState)
+		 	doGetObjects(orderState);
+	  	});
+   }
+   //接单
+   function getOrder(){
+   	 let id=$(this).parents("tr").data("id");
+     let param = {"state":1,"id" : id};
+   	 $.post("order/getOrder",param,function(result){
+   	 	alert(result.message);
+   	 	doLoadWeichuli(orderState);
+   	 })
+   }
+   
+   function doLoadEditUI(){
+	   var title;
+	   if($(this).hasClass('btn-add')){
+		   title="添加角色";
+		   doLoadPageUI(title);
+	   }else{
+		   title="修改角色"
+		   var id=$(this).parents("tr").data("id");
+		   //console.log(id);
+		   var params={"id":id};
+		   var url="order/doFindObjectById";
+		   $.getJSON(url,params,function(result){
+			   if(result.state==1){
+				  result.data.id=id;//在结果中动态追加id
+				  $("#mainContentId").data("data",result.data);
+				  doLoadPageUI(title);//异步加载页面  
+			   }else{
+				  alert(result.message); 
+			   }
+		   });
+	   }
+   }
+   function doLoadPageUI(title){
+	   var url="order/doOrderEditUI"
+	   $("#mainContentId")
+	   .load(url,function(){
+		   $(".box-title").html(title);
+	   })
+   }
+   
+   
+   
+   function doDeleteObject(){
+	  if(confirm("确认删除此订单吗？")){
+	  	 //1.params
+	   	 var id=$(this).parents("tr").data("id");
+	    var params={"id":id};
+	    //2.url
+	    var url="order/doDeleteObject"
+	    //3.ajax request
+	    $.post(url,params,function(result){
+		   if(result.state==1){
+			   alert(result.message);
+			   doGetObjects(orderState);
+		   }else{
+			   alert(result.message);
+		   }
+	   });
+	  }
+   }
+   function doQueryObjects(){
+	   $("#pageId").data("pageCurrent",1);
+	   doGetObjects(orderState);
+   }
+   
+   //核心查询
+   function doGetObjects(orderState){
+   		
+	   //1.params
+	   //获取在Page.html中绑定的当前页码值
+	   var pageCurrent=$("#pageId").data("pageCurrent");
+	   //假如没有值,设置初始值为1
+	   if(!pageCurrent)pageCurrent=1;
+	   var params={"pageCurrent":pageCurrent,"state":orderState};
+	   //获取查询时用户输入的名字
+	   var tableId=$("#searchTableId").val();
+	   if(tableId)params.tableId = tableId;
+	   //2.url
+	   var url="order/doFindPageObjects";
+	   $.getJSON(url,params,function(result){
+		   doHandleResponseResult(result,orderState);
+	   });
+   }
+   //处理返回结果 result
+   function doHandleResponseResult(result,state){ 
+   
+   //查询的是已处理订单
+   	if(state==1){
+   		if(result.state==1){
+		  	doSetTableBodyRows(result.data.records,state);//处理 result 封装的 pageObject中的 Order
+		  	doSetPagination(result.data);//处理 result 封装的 pageObject中的分页信息
+	   	}else{
+		  	doSetTableBodyErrors(result.message);
+	   	}
+   	}else if(state == 0){   //查询到的是未处理订单
+   		if(result.state==1){
+		  	doSetTableBodyRows(result.data.records,state);//处理 result 封装的 pageObject中的 Order
+		  	doSetPagination(result.data);//处理 result 封装的 pageObject中的分页信息
+	   	}else{
+		  	doSetTableBodyErrors(result.message);
+	   	}
+   	}
+	   
+   }
+   function doSetTableBodyErrors(message){
+	   //获取body对象并清空
+	   var tBody=$("#tbodyId");
+	   tBody.empty();
+	   //创建tr对象
+	   var tr=$("<tr></tr>");
+	   //创建td对象
+	   //var len=$("table thead").find("tr").find("th").length;
+	   var len=$("table th").length;
+	   var td=$("<td></td>");
+	   td.prop("colspan",len);
+	   td.append(message);
+	   tr.append(td);
+	   //将tr追加到tbody
+	   tBody.append(tr);
+   }
+   
+   //处理 result 封装的 pageObject中的 Order
+   function doSetTableBodyRows(records,state){  
+	  //获取tbody对象,并清空
+	   var tBody=$("#tbodyId");
+	   tBody.empty();
+	   //2.迭代数据,并追加到tBody
+	   for(var i in records){
+		  //2.1构建tr对象
+		  var tr=$("<tr></tr>");
+		  tr.data("id",records[i].id);
+		  //2.2构建tds对象
+		  var tds=doCreateTds(records[i],i,state);
+		  //2.3将tds对象追加到tr中
+		  tr.append(tds);
+		  //2.4将tr追加到tbody中
+		  tBody.append(tr);
+	   }
+   }
+   function doCreateTds(row,i,state){
+   
+   	 if(state==0){   //查询到时未处理订单所创建的td
+   		var tds=
+       		"<td>"+(parseInt(i)+1)+"</td>"+
+	   		"<td>"+row.tablenum+"</td>"+
+       		"<td>"+row.content+"</td>"+
+       		"<td>"+ new Date(row.createdTime).toLocaleString()+"</td>"+
+       		"<td>"+row.total+"</td>"+
+       		"<td>"+row.payType+"</td>"+
+       		"<td><a class='btn-getOrder btn btn-info btn-sm'>接单</a>";
+      	 return tds;
+     }
+     if(state==1){
+   		var tds=
+       		"<td>"+(parseInt(i)+1)+"</td>"+
+	   		"<td>"+row.tablenum+"</td>"+
+       		"<td>"+row.content+"</td>"+
+       		"<td>"+ new Date(row.createdTime).toLocaleString()+"</td>"+
+       		"<td>"+row.total+"</td>"+
+       		"<td>"+row.payType+"</td>"+
+       		"<td><a class='btn-delete'>删除</a>"+
+       		"&nbsp|&nbsp;<a class='btn-update'>更新</a></td>";
+      	 return tds;
+     }
+	   
+   }
+   
+   });
+</script>

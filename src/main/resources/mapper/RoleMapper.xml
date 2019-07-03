@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yds.order.dao.RoleDao">
+
+
+	<sql id="queryWhereName">
+		<where>
+			<if test="name!=null and name != ''">
+				name like concat("%",#{name},"%")
+			</if>
+		</where>
+	</sql>
+
+	<select id="findPageObjects"
+		resultType="com.yds.order.entity.YdsRole">
+		select
+		id,name,note,createdTime,modifiedTime,createdUser,modifiedUser
+		from
+		yds_role
+		<include refid="queryWhereName" />
+
+	</select>
+
+	<select id="getRowCount" resultType="int">
+		select count(*) from
+		yds_role
+	</select>
+	<insert id="addRole" useGeneratedKeys="true" keyProperty="id"
+		parameterType="com.yds.order.entity.YdsRole">
+		insert into
+		yds_role (name,note,createdTime,modifiedTime,createdUser,modifiedUser)
+		values
+		(#{name},#{note},now(),now(),#{createdUser},#{modifiedUser})
+
+	</insert>
+	<resultMap type="com.yds.common.vo.RoleFunmenuVo"
+		id="roleFunmenuVo">
+		<id property="id" column="id" />
+		<result property="name" column="name" />
+		<result property="note" column="note" />
+		<collection property="funmenuIds" column="id"
+			select="com.yds.order.dao.RoleFunmenuDao.doFindFunmenuByRoleId"></collection>
+	</resultMap>
+	<select id="doFindObjectById" resultMap="roleFunmenuVo">
+		select
+		id,name,note
+		from
+		yds_role
+		where
+		id = #{id}
+	</select>
+	<update id="doUpdateObject">
+		update
+		yds_role
+		set
+		name = #{name} ,note = #{note},modifiedTime = now(),modifiedUser =
+		#{modifiedUser}
+		where
+		id = #{id}
+	</update>
+	<select id="doFindZTreeNodes" resultType="com.yds.order.entity.YdsRole">
+		select id,name from yds_role
+	</select>
+	
+
+</mapper>

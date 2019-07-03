@@ -1,0 +1,181 @@
+<div class="row">
+	<div class="col-xs-12">
+		<div class="box">
+			<div class="box-header">
+				<h3 class="box-title">角色管理</h3>
+
+				<div class="box-tools">
+					<div class="input-group input-group-sm" style="width: 350px;">
+						<input type="text" name="table_search" id="searchNameId"
+							class="form-control pull-right" placeholder="角色名称">
+
+						<div class="input-group-btn">
+							<button type="button" class="btn btn-default btn-search">
+                                <i class="fa fa-search"></i>
+							</button>
+							<button type="button" class="btn btn-success btn-add">添加</button>
+							<button type="button" class="btn btn-update">修改</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- /.box-header -->
+			<div class="box-body table-responsive no-padding">
+				<table class="table table-hover">
+					<thead>
+						<tr>
+							<th>选择</th>
+							<th>角色</th>
+							<th>创建时间</th>
+							<th>创建用户</th>
+							<th>修改时间</th>
+							<th>修改用户</th>
+							<th>操作</th>
+						</tr>
+					</thead>
+					<tbody id="tbodyId"></tbody>
+				</table>
+			</div>
+			<div id="pageId" class="box-footer clearfix">
+			</div>
+			<!-- /.box-body -->
+		</div>
+		<!-- /.box -->
+	</div>
+</div>
+<script type="text/javascript">
+   $(document).ready(function(){
+	   $("#module").text("角色管理");
+	   doGetObjects();
+	   $(".input-group-btn")
+	   .on("click",".btn-search",doQueryObjects)
+	   .on("click",".btn-add,.btn-update",doLoadEditUI);
+	   //$("tbody").on("click",".btn-valid",doValidById);
+	   $("#tbodyId").on("click",".btn-delete",doDeleteObject)
+   });
+   
+   function doDeleteObject(){
+   		if(confirm("确认删除当前记录吗？")){
+   			//获取id
+   			let id = $(this).parents("tr").data("thisId");
+   			let param = {"id" : id};
+   			let url = "role/doDeleteObject";
+   			$.post(url, param, function(result) {
+   				if(result.state==1){
+   					alert(result.message);
+   					doGetObjects();
+   				}else{
+   				alert(result.message);
+   				}
+   			})
+   		}
+   }
+   
+   function doLoadEditUI(){
+	   //1.判定点击的对象
+	   var title;
+	   if($(this).hasClass("btn-add")){
+		   title="添加角色";
+		   doLoadPage(title);
+	   }else if($(this).hasClass("btn-update")){
+		   title="修改角色";
+		   var id=doGetCheckedId();
+
+		   if(!id){
+			  alert("请先选择一个角色");
+			  return;
+		   }
+		   //基于id进行查询并加载编辑页面
+		   doFindObjectById(id,title);
+	   }
+   }
+   function doFindObjectById(id,title){
+	   //1.params
+	   var params={"id":id};
+	   //2.url
+	   var url="role/doFindObjectById";
+	   //3.ajax request
+	   $.getJSON(url,params,function(result){//JsonResult
+		   if(result.state==1){
+			  $("#mainContentId").data("data",result.data); 
+	          doLoadPage(title);
+		   }else{
+			  alert(result.message);
+		   }
+	   });
+   }
+   
+   function doGetCheckedId(){
+	 return $("tbody input[name='radioId']:checked").val();
+   }
+   function doLoadPage(title){
+	   var url="role/doRoleEditUI"
+	   $("#mainContentId").load(url,function(){
+		   $(".box-title").html(title);
+	   }) 
+   }
+   //处理查询按钮事件
+   function doQueryObjects(){
+	   $("#pageId").data("pageCurrent",1);
+	   doGetObjects();
+   }
+   
+   //查询角色
+   //页面加载完成异步加载当前页数据
+   function doGetObjects(){
+	   var url="role/doFindRoles";//原来是doFindPageObjects
+	   //var pageCurrent=$("#pageId").data("pageCurrent");
+	   //if(!pageCurrent)pageCurrent=1;
+	   //var params={"pageCurrent":pageCurrent}
+	   var name=$("#searchNameId").val().trim();
+	   let param = {"name": name};
+	   $.getJSON(url,param,function(result){
+		   doHandleResponseResult(result);
+	   });
+   }
+   function doHandleResponseResult(result){
+	   if(result.state==1){
+		  doSetTableBodyRows(result.data);
+		}else{
+		  alert(result.message);
+	   }
+   }
+   
+   //通过服务端返回的数据初始化页面
+   function doSetTableBodyRows(data){
+	  //1.获取tbody对象，并清空内容
+	  var tBody=$("#tbodyId");
+	  tBody.empty();
+	  //2.迭代data内容将数据追加到tbody中
+	  for(var i in data){
+		  var tr=$("<tr></tr>");
+		  tr.data("rowData",data[i]);
+		  tr.data("thisId",data[i].id);
+		  var tds=doCreateTds(data[i],i);
+		  tr.append(tds);
+		  tBody.append(tr);
+	  }
+   }
+   function doCreateTds(row,i){
+	   var tds="<td> <input type='radio' value='"+row.id+"' name='radioId'>" + "</td>"+
+	     "<td>"+row.name+"</td>"+
+	     "<td>"+new Date(row.createdTime).toLocaleString()+"</td>"+
+	     "<td>"+row.createdUser+"</td>"+
+	     "<td>"+new Date(row.modifiedTime).toLocaleString()+"</td>"+
+	     "<td>"+row.modifiedUser+"</td>"+
+	     "<td><button type='button' class='btn btn-sm btn-danger btn-delete'>删除</button></td>"; 
+       return tds;
+   }
+/*    function doGetUserName(){
+	   $.ajaxSettings.async = false;
+		$.post("emp/getUserName",function(result){
+			console.log(result);
+	  		$("#tbodyId").data("modifiedUser",result);
+	  	});
+	   $.ajaxSettings.async = true;
+	} */
+</script>
+
+
+
+
