@@ -3,10 +3,12 @@ package com.yds.order.dao;
 import com.yds.order.entity.Table;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Mapper
+@Component
 public interface TableDao {
     int findCount(@Param("state") Integer state);
     

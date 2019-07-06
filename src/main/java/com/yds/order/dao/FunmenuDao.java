@@ -8,7 +8,10 @@ import org.apache.ibatis.annotations.Param;
 
 import com.yds.common.vo.Node;
 import com.yds.order.entity.Funmenu;
+import org.springframework.stereotype.Component;
+
 @Mapper
+@Component
 public interface FunmenuDao {
 	
 	public List<Funmenu> findZTree();

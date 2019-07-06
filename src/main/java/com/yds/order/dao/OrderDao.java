@@ -6,8 +6,10 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import com.yds.order.entity.Order;
+import org.springframework.stereotype.Component;
 
 @Mapper
+@Component
 public interface OrderDao {
     int insertObject(@Param("order") Order order);
     

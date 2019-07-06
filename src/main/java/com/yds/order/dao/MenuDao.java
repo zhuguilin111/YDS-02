@@ -6,8 +6,10 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import com.yds.order.entity.Menu;
+import org.springframework.stereotype.Component;
 
 @Mapper
+@Component
 public interface MenuDao {
 	    List<Menu> findObjects(@Param("name") String name);
 	 

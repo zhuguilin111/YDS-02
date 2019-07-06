@@ -8,7 +8,10 @@ import org.apache.ibatis.annotations.Param;
 
 import com.yds.common.vo.RoleFunmenuVo;
 import com.yds.order.entity.YdsRole;
+import org.springframework.stereotype.Component;
+
 @Mapper
+@Component
 public interface RoleDao {
 	/**
 	 * 分页查询

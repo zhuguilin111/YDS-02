@@ -6,8 +6,10 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import com.yds.order.entity.Log;
+import org.springframework.stereotype.Component;
 
 @Mapper
+@Component
 public interface LogDao {
 	/**按条件查询日志总记录数
 	 * @param username 查询条件

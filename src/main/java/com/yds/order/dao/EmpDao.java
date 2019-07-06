@@ -8,8 +8,10 @@ import org.apache.ibatis.annotations.Param;
 import com.yds.common.vo.EmpNode;
 import com.yds.common.vo.YdsEmpRoleVo;
 import com.yds.order.entity.YdsEmp;
+import org.springframework.stereotype.Component;
 
 @Mapper
+@Component
 public interface EmpDao {
 	//分页查询员工信息
 	List<EmpNode> findPageObjects(
