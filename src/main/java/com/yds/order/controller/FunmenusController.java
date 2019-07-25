@@ -1,5 +1,8 @@
 package com.yds.order.controller;
 
+import com.yds.order.dao.RoleDao;
+import com.yds.order.entity.YdsEmp;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -10,12 +13,19 @@ import com.yds.common.vo.JsonResult;
 import com.yds.order.entity.Funmenu;
 import com.yds.order.service.FunmenuService;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 @Controller
 @RequestMapping("/funmenu/")
 public class FunmenusController {
 
 	@Autowired
 	private FunmenuService funmenuService;
+
+	@Autowired
+	private RoleDao roleDao;
 	
 	@RequestMapping("/doFindZtreeMenuNodes")
 	@ResponseBody
@@ -27,7 +37,7 @@ public class FunmenusController {
 	public String doGongListUI() {
 		return "yds/gong_list";
 	}
-	@RequiresPermissions("yds:user:valid")
+	@RequiresPermissions("yds:sys")
 	@RequestMapping("doFindObjects")
 	@ResponseBody
 	public JsonResult doFindObjects(){
@@ -60,5 +70,19 @@ public class FunmenusController {
 	public JsonResult doUpdateObject(Funmenu funmenu){
 		funmenuService.updateObject(funmenu);
 	    return new JsonResult("修改成功");
+	}
+
+
+	//根据用户id获取其对应的功能菜单
+	@RequestMapping("findFunmenusByRoleId")
+	@ResponseBody
+	public JsonResult findFunmenusByRoleId(){
+		YdsEmp emp = (YdsEmp) SecurityUtils.getSubject().getPrincipal();
+		//根据用户id获取角色id
+		Integer[] ids = (Integer[]) roleDao.findRoleByEmpId(emp.getId());
+
+		//System.out.println(Arrays.toString(ids));
+		List<Funmenu> funmenus = funmenuService.findFunmenusByRoleId(ids);
+		return new JsonResult(funmenus);
 	}
 }

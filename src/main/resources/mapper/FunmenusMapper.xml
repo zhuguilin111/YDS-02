@@ -49,14 +49,14 @@
 	</select>
 	<!-- 查询员工授权标识 -->
 	<select id="findPermissions" resultType="String">
-		select permission <!-- sys:user:update -->
-       from yds_funmenus
-       where id in 
-       <foreach collection="array"
-                open="("
-                close=")"
-                separator=","
-                item="item">
+		select
+			permission
+       from
+       		yds_funmenus
+       where
+       		id
+       in
+       <foreach collection="array" open="(" close=")" separator="," item="item">
             #{item}
        </foreach>
 	</select>

@@ -42,5 +42,12 @@ public class PageController {
 	@RequestMapping("doPageUI")
 	public String doPageUI(){//在加载log_list之前先加载分页信息页面
 		 return "common/page";
+
 	 }
+
+	 @RequestMapping("/wellcome")
+	public String wellCome(){
+		return "wellcome";
+	 }
+
 }

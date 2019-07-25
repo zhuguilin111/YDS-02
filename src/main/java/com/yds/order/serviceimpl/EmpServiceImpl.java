@@ -71,7 +71,7 @@ public class EmpServiceImpl implements EmpService{
 		map.put("roleId", roleId);
 		return map;
 	}
-	@RequiresPermissions("yds:user:valid")
+	@RequiresPermissions("yds:staff")
 	@Override
 	@Transactional
 	public int doSaveObject(YdsEmp entity, Integer[] roleIds) {
@@ -100,7 +100,7 @@ public class EmpServiceImpl implements EmpService{
 			    //throw new ServiceException("关系数据保存失败");
 				return rows;
 	}
-	@RequiresPermissions("yds:user:valid")
+	@RequiresPermissions("yds:staff")
 	@Override
 	@Transactional
 	public int doUpdateObject(YdsEmp entity, Integer[] roleIds) {
@@ -120,7 +120,7 @@ public class EmpServiceImpl implements EmpService{
 		return row;
 	}
 	//禁用启用
-	@RequiresPermissions("yds:user:valid")
+	@RequiresPermissions("yds:staff")
 	@Override
 	public int validById(Integer id, Integer valid, String modifiedUser) {
 		//参数校验

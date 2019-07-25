@@ -130,13 +130,17 @@
                 <i class="fa fa-angle-left pull-right"></i>
               </span>
           </a>
-          <ul class="treeview-menu">
+          <ul class="treeview-menu" id="sys_menu">
+            <!--
             <li><a id="load-menu-id">菜单管理</a></li>
             <li><a id="load-emp-id">员工管理</a></li>
             <li><a id="load-role-id">角色管理</a></li>
             <li><a id="load-table-id">桌位管理</a></li>
+
             <li><a id="load-gong-id">功能管理</a></li>
+
             <li><a id="load-log-id"> 日志管理</a></li>
+            -->
           </ul>
         </li>
         
@@ -298,15 +302,18 @@
 <script type="text/javascript">
    $(function(){ 
    
-	  $("#mainContentId").load("menu/doMenuListUI");
-	  doLoadUI("load-log-id","log/doLogListUI");//日志
-	  doLoadUI("load-menu-id","menu/doMenuListUI");//菜单
-	  //doLoadUI("load-order-id","order/doOrderListUI");//订单
-	  doLoadUI("load-table-id","table/doTableListUI");//桌位
-	  doLoadUI("load-role-id","role/doRoleListUI");//角色
-	  doLoadUI("load-emp-id","emp/doEmpListUI");//员工
-	  doLoadUI("load-gong-id","funmenu/doFunmenuListUI");
-	  
+	  $("#mainContentId").load("order/doOrderListUI");
+     $(".orderState").data("thisState",0);
+     /*
+     doLoadUI("load-log-id","log/doLogListUI");//日志
+     doLoadUI("load-menu-id","menu/doMenuListUI");//菜单
+     //doLoadUI("load-order-id","order/doOrderListUI");//订单
+     doLoadUI("load-table-id","table/doTableListUI");//桌位
+     doLoadUI("load-role-id","role/doRoleListUI");//角色
+     doLoadUI("load-emp-id","emp/doEmpListUI");//员工
+
+     doLoadUI("load-gong-id","funmenu/doFunmenuListUI");
+     */
 	  //如果已处理订单被点击，给thisState状态为1
 	  $("#load-order-processed").click(function(){
 	  	$(".orderState").data("thisState",1); 
@@ -324,7 +331,7 @@
 	  var websocket = null;
 	  //判断浏览器是否支持websocket
 	  if('WebSocket' in window){
-	  	websocket = new WebSocket("ws://localhost/websocket");
+	  	websocket = new WebSocket("ws://yds.guil.xyz/websocket");
 	  }else{
 	  	console.log("当前浏览器不支持websocket");
 	  }
@@ -370,7 +377,39 @@
 	  	$.get("emp/getUserName",function(result){
 	  		$(".hidden-xs").html(result);
 	  	})
-	  	
+
+
+     //根据用户获取对应的菜单
+     $.ajax({
+       url:"funmenu/findFunmenusByRoleId",
+       dataType:"json",
+       type:"post",
+       success:function (data) {
+         //console.log(data);
+         if (data.state == 1){
+            //遍历所有的菜单
+           var result = data.data;
+           for (var i = 0 ; i <result.length ; i ++ ){
+             let funmenu = result[i];
+             if (funmenu.parentId == 1 && funmenu.url != null) {
+               $("#sys_menu").append(createLi(funmenu));
+             }
+           }
+         }
+       }
+     })
+
+     function createLi(funmenu) {
+        let _li = $("<li></li>");
+        let _a = $("<a id='" + funmenu.url + "'>" + funmenu.name+"</a>")
+        _li.append(_a);
+        return _li;
+     }
+
+     $(".treeview-menu").on("click","a",function () {
+         let url = $(this).attr("id");
+         $("#mainContentId").load(url);
+     })
 	  	
    });
    function doLoadUI(id,url){
@@ -379,6 +418,8 @@
 		  $("#mainContentId").load(url);
 	   });  
    }
+
+   //
 </script>
 </body>
 </html>

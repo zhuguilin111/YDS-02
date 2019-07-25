@@ -28,7 +28,7 @@ public class RoleController {
 	/** 查询所有角色*/
 	@RequestMapping("doFindRoles")
 	@ResponseBody
-	@RequiresPermissions("yds:user:valid")
+	@RequiresPermissions("yds:role")
 	public JsonResult doFindPageObjects(String name) {
 		return new JsonResult(roleService.findPageObjects(name));
 	}
@@ -54,7 +54,6 @@ public class RoleController {
 	/** 根据id删除*/
 	@RequestMapping("doDeleteObject")
 	@ResponseBody
-	//@RequiresPermissions("yds:user:valid")
 	public JsonResult doDeleteObjectById(Integer id) {
 		return new JsonResult("已删除 "+ roleService.deleteObject(id) + "条数据");
 	}
@@ -62,7 +61,7 @@ public class RoleController {
 	/**修改角色*/
 	@RequestMapping("doUpdateObject")
 	@ResponseBody
-	@RequiresPermissions("yds:user:valid")
+	@RequiresPermissions("yds:role")
 	public JsonResult doUpdateObject(YdsRole role ,Integer[] menuIds) {
 		return new JsonResult("已修改" + roleService.updateObject(role,menuIds) + "条数据");
 	}

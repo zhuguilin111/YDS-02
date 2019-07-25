@@ -82,29 +82,24 @@ public class ShiroEmpRealm extends AuthorizingRealm{
 	private FunmenuDao funmenuDao;
     /**此方法负责授权信息的获取及封装*/
 	@Override
-	protected AuthorizationInfo doGetAuthorizationInfo(
-		 PrincipalCollection principals) {
+	protected AuthorizationInfo doGetAuthorizationInfo( PrincipalCollection principals) {
 		//1.获取用户id
-		YdsEmp emp=(YdsEmp)
-		principals.getPrimaryPrincipal();
+		YdsEmp emp=(YdsEmp) principals.getPrimaryPrincipal();
 		//2.基于用户id查询角色id
 		Integer roleId = empRoleDao.findRoleIdByEmpId(emp.getId());
 		if(roleId<=0)
-		throw new AuthorizationException();
+			throw new AuthorizationException();
 		//3.基于角色id获取菜单id
 		Integer[] array={};
-		List<Integer> menuIds=
-		roleFunmenuDao.doFindFunmenuByRoleId(roleId);
+		List<Integer> menuIds = roleFunmenuDao.doFindFunmenuByRoleId(roleId);
 		if(menuIds==null||menuIds.isEmpty())
-		throw new AuthorizationException();
+			throw new AuthorizationException();
 		//4.基于菜单id获取权限标识
-		List<String> permissionsList=
-		funmenuDao.findPermissions(menuIds.toArray(array));	
+		List<String> permissionsList = funmenuDao.findPermissions(menuIds.toArray(array));
 		if(permissionsList==null||permissionsList.isEmpty())
-		throw new AuthorizationException("66666");
+			throw new AuthorizationException("66666");
 		//5.封装数据并返回
-		SimpleAuthorizationInfo info=
-		new SimpleAuthorizationInfo();
+		SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
 		Set<String> permisssionSet=new HashSet<>();
 		for(String permisssion:permissionsList) {
 			 if(!StringUtils.isEmpty(permisssion)) {

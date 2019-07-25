@@ -13,13 +13,7 @@ import org.springframework.stereotype.Component;
 @Mapper
 @Component
 public interface RoleDao {
-	/**
-	 * 分页查询
-	 * @param name 角色名
-	 * @param startIndex  开始位置
-	 * @param pageSize  每页数量
-	 * @return
-	 */
+
 	List<YdsRole> findPageObjects(@Param("name")String name);
 	
 	/** 查询有多少记录*/
@@ -42,6 +36,8 @@ public interface RoleDao {
 	int doDeleteObject(Integer id);
 	
 	List<YdsRole> doFindZTreeNodes();
+
+	Integer[] findRoleByEmpId(int id);
 	
 	
 }

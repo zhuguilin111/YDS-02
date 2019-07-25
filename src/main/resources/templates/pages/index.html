@@ -220,7 +220,7 @@
 			    $(".main").data("orderContent", orderContent);
 			    //异步提交数据
 			    $.post("order/doInsertObject", params, function(result) {
-				    console.log(result);
+				    //console.log(result);
 				    if (result.state == 1) {
 					    //alert(result.message);
                         alert("下单成功,请稍等...");

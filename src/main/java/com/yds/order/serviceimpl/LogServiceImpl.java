@@ -36,7 +36,7 @@ public class LogServiceImpl implements Logservice {
 		//5.返回结果
 		return po;
 	}
-	@RequiresPermissions("yds:user:valid")
+	@RequiresPermissions("yds:log")
 	@Transactional
 	@Override
 	public int deleteObjectsById(Integer[] ids) {

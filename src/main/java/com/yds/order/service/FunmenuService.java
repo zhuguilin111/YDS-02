@@ -18,4 +18,6 @@ public interface FunmenuService {
 	int updateObject(Funmenu gong);
 
 	List<Funmenu> doFindZtreeMenuNodes();
+
+    List<Funmenu> findFunmenusByRoleId(Integer[] id);
 }

@@ -13,6 +13,8 @@ public class RoleFunmenuVo implements Serializable{
 	private String note;
 	/** 角色所对应的功能菜单*/
 	private List<Integer> funmenuIds;
+
+
 	public Integer getId() {
 		return id;
 	}

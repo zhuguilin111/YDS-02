@@ -1,5 +1,6 @@
 package com.yds.order.serviceimpl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -89,5 +90,15 @@ public class FunmenuServiceImpl implements FunmenuService{
 			throw new ServiceException("记录可能已经不存在");
 		//3.返回数据
 		return rows;
+	}
+
+	/**
+	 * 查询菜单名称
+	 * @param ids
+	 * @return
+	 */
+	@Override
+	public List<Funmenu> findFunmenusByRoleId(Integer[] ids) {
+		return roleFunmenuDao.findFunmenusByRoleId(ids);
 	}
 }
