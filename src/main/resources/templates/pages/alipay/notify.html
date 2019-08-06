@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>正在跳转支付...</title>
+    <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+</head>
+<body>
+<div class="i"></div>
+    <script>
+
+        let url = location.href;
+        //console.log(url);
+        let paramIndex = url.lastIndexOf("?");
+        let param = url.substring(paramIndex+1);
+        //console.log(param);
+        let params = param.split("&");
+        //console.log(params);
+        let total = params[0].substring(params[0].indexOf("=")+1);
+        //console.log(total);
+        let content = params[1].substring(params[1].indexOf("=")+1);
+        //console.log(content);
+        let tableId = params[2].substring(params[2].indexOf("=")+1);
+        //console.log(tableId);
+        let decContent = decodeURIComponent(content);
+        //console.log(decContent);
+
+        $.ajax({
+            url:"pay",
+            data:{"total":total,"content":decContent,"tableId":tableId},
+            dataType:"html",
+            success:function (result) {
+                $(".i").html(result);
+            },error:function () {
+                console.log("7")
+            }
+        })
+    </script>
+</body>
+</html>

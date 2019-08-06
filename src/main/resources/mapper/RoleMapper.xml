@@ -67,6 +67,10 @@
 	<select id="findRoleByEmpId" resultType="int">
 		select role_id from yds_emp_roles where emp_id = #{id}
 	</select>
+
+	<select id="findRoleNameByEmpId" resultType="com.yds.order.entity.YdsRole">
+		select name from yds_role where id = (select role_id from yds_emp_roles where emp_id = #{empId})
+	</select>
 	
 
 </mapper>

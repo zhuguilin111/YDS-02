@@ -5,17 +5,47 @@
 <meta name="viewport"
 	content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>易店 |订餐购物车</title>
-<!-- jQuery 3 -->
+<link rel="stylesheet" href="dist/menu.css">
+
 <script src="bower_components/jquery/dist/jquery.min.js"></script>
-<!-- Bootstrap 3.3.7 -->
 <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="bower_components/layer/layer.js"></script>
 <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
 <script src="dist/js/adminlte.min.js"></script>
-<link rel="stylesheet" href="dist/menu.css">
+    <script src="dist/js/jquery.min.js"></script>
+<style rel="stylesheet">
+    .layui-layer-title{
+        background: #7ae5fe;
+        font-weight: bold;
+    }
+
+    .layui-layer-btn a{
+        display: block;
+        margin-top: 12px;
+    }
+    .layui-layer-btn a:nth-child(1){
+        background: #fffb85;
+        color: #000;
+    }
+    .layui-layer-btn a:nth-child(2){
+         background: green;
+         color: #fff;
+        font-weight: bold;
+     }
+    .layui-layer-btn a:nth-child(3){
+        background: #00aaee;
+        color: #fff;
+        font-weight: bold;
+    }
+
+
+</style>
 </head>
 
 <body>
+<script>
 
+</script>
 
 <div class="big-bg">
 
@@ -51,13 +81,45 @@
 </div>
 	<!-- bg -->
 
-
-
-	<script type="text/javascript" src="dist/js/jquery.min.js"></script>
 	<script type="text/javascript">
 		$(function() {
 			doCheckTable(); //获取到当前桌子号
-			$("#btnselect").click(doSubmit); //结算点击
+			//$("#btnselect").click(doSubmit); //结算点击
+			$("#btnselect").click(function () {
+
+			    $(".layui-layer-btn0").hide();
+                layer.open({
+                    title: '选择结算方式',
+                    btn:['现金','微信','支付宝'],
+                    btn1:function () {
+                        doSubmit();
+                    },
+                    btn2:function () {
+                        layer.msg("暂时不支持微信哟!");
+                    },
+                    btn3:function () {
+                        //alert("你选择支付宝")
+                        let total = $(".moneyAll").html();    //总金额
+                        let tableId = tableNum;   //桌子号
+                        let content = $(".orderXq").html();    //订单内容
+                        let params = {
+                            "total" : total,
+                            "tableId" : tableId,
+                            "content" : content
+                        }
+
+                        let p = JSON.stringify(params);
+                        let pj = JSON.parse(p);
+                        console.log(p);
+                        //let par = $.toJSON(params);
+                        window.open("http://yds.guil.xyz/alipay/notifyUI?total="+total+"&content="+content+"&tableId="+tableId,"_self");
+                        //window.location.herf="http://localhost:8088/alipay/notify";
+                    },
+                    closeBtn:1,
+                    btnAlign:'c'
+
+                });
+            }); //结算点击
             $("#btnEmpty").click(function () {
                 if(confirm("确认清空吗?")){
                     location.reload();

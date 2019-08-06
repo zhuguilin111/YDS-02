@@ -53,7 +53,7 @@ public class OrderServiceImpl implements OrderService {
 		//查询总记录数
 		int rowsCount = orderDao.getRowsCount(tableId,state);
 		if (rowsCount == 0) {
-			throw new ServiceException("系统没有查到对应记录");
+			//throw new ServiceException("系统没有查到对应记录");
 		}
 		//计算分页信息
 		int pageSize = PageUtil.getPageSize();// 每页显示5条记录

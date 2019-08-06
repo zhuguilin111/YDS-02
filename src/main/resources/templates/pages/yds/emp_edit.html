@@ -38,20 +38,18 @@
 				<div class="form-group">
 					<label for="emailId" class="col-sm-2 control-label">邮箱</label>
 					<div class="col-sm-10">
-						<input type="text" class="form-control" id="emailId"
-							onblur="checkEmail()" onfocus="setMsg('填写邮箱')" />
+						<input type="text" class="form-control" id="emailId" onblur="checkEmail()" onfocus="setMsg('填写邮箱')" />
 					</div>
 				</div>
 				<div class="form-group">
 					<label for="phoneId" class="col-sm-2 control-label">手机号码</label>
 					<div class="col-sm-10">
-						<input type="text" class="form-control" id="phoneId"
-						onblur="checkPhone()" onfocus="setMsg('填写手机号码')" />
+						<input type="text" class="form-control" id="phoneId" onblur="checkPhone()" onfocus="setMsg('填写手机号码')" />
 					</div>
 				</div>
 				<div class="form-group">
-					<label for="rolesId" class="col-sm-2 control-label">授予职位权限</label>
-					<div class="col-sm-10" id="rolesId"></div>
+					<label for="rolesId" class="col-sm-2 control-label">请赋予员工职位</label>
+					<div class="col-sm-10" id="rolesId" style="margin-top: 7px"></div>
 				</div>
 			</div>
 			<!-- /.box-body -->
@@ -246,7 +244,7 @@ function doInitPageRoles(data){
 	 var div=$("#rolesId");
 	 div.empty();
 	 //2.杩唬鏁版嵁锛屽皢鏁版嵁杩藉姞鍒癲iv
-	 var input="<input type='checkbox' name='roleId' value='[id]'>[name]"
+	 var input="<input type='radio' name='roleId' value='[id]'>[name]　"
 	 for(var i in data){
 		 //璁颁綇姣忔replace鏃堕兘浼氫骇鐢熶竴涓柊鐨勫瓧绗︿覆瀵硅薄
 		 var newInput=

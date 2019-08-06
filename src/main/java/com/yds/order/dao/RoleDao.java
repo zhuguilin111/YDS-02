@@ -38,6 +38,7 @@ public interface RoleDao {
 	List<YdsRole> doFindZTreeNodes();
 
 	Integer[] findRoleByEmpId(int id);
-	
-	
+
+
+	YdsRole findRoleNameByEmpId(Integer empId);
 }

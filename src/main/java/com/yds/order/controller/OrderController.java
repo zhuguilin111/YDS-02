@@ -1,5 +1,6 @@
 package com.yds.order.controller;
 
+import com.yds.order.dao.OrderDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,10 +17,14 @@ public class OrderController {
 	@Autowired
 	private OrderService orderService;
 
+	@Autowired
+	private  OrderDao orderDao;
+
 	/** 添加点击保存  */
 	@RequestMapping("doInsertObject")
 	@ResponseBody
 	public JsonResult doInsertObject(Order entity) {
+		entity.setPayType("现金支付");
 		orderService.insertObject(entity);//数据插入订单表
 		return new JsonResult("订单提交成功!");
 	}
@@ -69,5 +74,12 @@ public class OrderController {
 	public JsonResult getOrder(Integer state,Integer  id) {
 		int row = orderService.getOrder(state, id);
 		return new JsonResult("已接"+ row +"单");
+	}
+
+	@RequestMapping("findWeichuli")
+	@ResponseBody
+	public JsonResult findWeichuli(){
+		int wcl = orderDao.findWeichuli();
+		return new JsonResult(wcl);
 	}
 }

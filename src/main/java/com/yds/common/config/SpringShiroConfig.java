@@ -50,12 +50,17 @@ public class SpringShiroConfig {// spring-shiro.xml
 		map.put("/build/**", "anon");
 		map.put("/dist/**", "anon");
 		map.put("/plugins/**", "anon");
+		map.put("/layui/**", "anon");
 		map.put("/doOrderUI", "anon");
+		map.put("/alipay/notifyUI", "anon");
+		map.put("/alipay/return", "anon");
+		map.put("/alipay/pay", "anon");
 		map.put("/doCheckTable", "anon");
 		map.put("/menu/doFindObjects", "anon");
 		map.put("/variety/doGetVarietyObjects", "anon");
 		map.put("/order/doInsertObject", "anon");
 		map.put("/emp/doLogin", "anon");
+
 		map.put("/doLogout", "logout");// 自动查LoginUrl
 		// 除了匿名访问的资源,其它都要认证("authc")后访问
 		map.put("/**", "authc");

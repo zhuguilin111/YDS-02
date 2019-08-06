@@ -2,6 +2,9 @@ package com.yds.order.controller;
 
 import java.util.Map;
 
+import com.yds.common.vo.YdsEmpRoleVo;
+import com.yds.order.dao.RoleDao;
+import com.yds.order.entity.YdsRole;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
@@ -24,6 +27,11 @@ public class EmpController {
 	private UsernamePasswordToken token;
 	@Autowired
 	private EmpService empService;
+
+	@Autowired
+	private RoleDao roleDao;
+
+
 	//向前端显示 menu_list
 	@RequestMapping("doEmpListUI")
 	public String doMenuListUI() {
@@ -132,10 +140,15 @@ public class EmpController {
 	/** 向前端发送登录用户名*/
 	@RequestMapping("getUserName")
 	@ResponseBody
-	public String getUserName() {
+	public YdsEmpRoleVo getUserName() {
 		YdsEmp emp = (YdsEmp)SecurityUtils.getSubject().getPrincipal();
-		String username = emp.getUsername();
-		return username;
+		//String username = emp.getUsername();
+		//根据用户id查询角色
+		YdsEmpRoleVo vo = new YdsEmpRoleVo();
+		vo.setUsername(emp.getUsername());
+		YdsRole role = roleDao.findRoleNameByEmpId(emp.getId());
+		vo.setYdsRole(role);
+		return vo;
 	}
 	/** 根据id删除员工*/
 	@RequestMapping("doDeleteObject")

@@ -5,7 +5,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>易店 |后台管理</title>
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-  <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.min.css">
   <link rel="stylesheet" href="bower_components/Ionicons/css/ionicons.min.css">
   <link rel="stylesheet" href="dist/css/AdminLTE.min.css">
@@ -19,6 +19,18 @@
   	a:hover{
   		cursor: pointer;
   	}
+    .weichuli{
+      display: inline-block;
+      background: #f5675c;
+      color: white;
+      height: 20px;
+      width: 20px;
+      border-radius: 5px;
+      margin-left: 100px;
+      text-align: center;
+      line-height: 20px;
+      font-weight: bold;
+    }
   	
   </style>
   
@@ -118,7 +130,7 @@
       <ul class="sidebar-menu" data-widget="tree">
         <li class="header">HEADER</li>
         <!-- Optionally, you can add icons to the links -->
-        <li class="active">
+        <li class="">
         <a href="#"><i class="fa fa-link"></i> 
         <span>更多功能尽情期待</span></a></li>        
         
@@ -145,7 +157,7 @@
         </li>
         
         <!-- 订单管理 -->
-        <li class="treeview">
+        <li class="treeview active">
         	<a href="#"><i class="fa fa-link"></i> 
           		<span class="orderState">订单管理</span>
             	<span class="pull-right-container">
@@ -156,7 +168,7 @@
             	<li><a id="load-order-processed"> 已处理</a></li>
             	<li>
             		<a id="load-order-untreated" style="display: inline-block;"> 未处理</a>
-            		<span style="color:red;display: inline-block;" class="weichuli">●</span>
+            		<span class="weichuli"></span>
             	</li>
           	</ul>
         </li>
@@ -321,17 +333,16 @@
 	  })
 	  //如果订单管理或者未处理订单被点击，给thisState状态为0
 	  $("#load-order-untreated").click(function(){
-	  	$(".weichuli").hide();
-	  	$(".orderState").data("thisState",0); 
+	  	$(".orderState").data("thisState",0);
 	  	$("#mainContentId").load("order/doOrderListUI")
 	  })
 	  
-	  $(".weichuli").hide();
+	  //$(".weichuli").hide();
 	  /*   webSocket   */
 	  var websocket = null;
 	  //判断浏览器是否支持websocket
 	  if('WebSocket' in window){
-	  	websocket = new WebSocket("ws://yds.guil.xyz/websocket");
+	  	websocket = new WebSocket("ws://yds.guil.xyz:8088/websocket");
 	  }else{
 	  	console.log("当前浏览器不支持websocket");
 	  }
@@ -353,6 +364,7 @@
 	  	}, 2000);//延迟2秒
 	  	
 	  	$(".weichuli").show();
+	  	findWeichuli();
 	  	
 	  	
 	  }
@@ -375,7 +387,9 @@
 	  
 	  //获取登录用户名
 	  	$.get("emp/getUserName",function(result){
-	  		$(".hidden-xs").html(result);
+	  	  //console.log(result);
+          $(".hidden-xs").html(result.username);
+          $(".role").html(result.ydsRole.name);
 	  	})
 
 
@@ -417,6 +431,29 @@
 			  //load函数是将url对应的资源加载到指定位置
 		  $("#mainContentId").load(url);
 	   });  
+   }
+
+   //查找未处理的订单
+   function findWeichuli() {
+     $.ajax({
+       url:"order/findWeichuli",
+       dataType: "json",
+       success:function (result) {
+          if (result.state == 1){
+            if (result.data !=0){
+              $(".weichuli").show();
+              $(".weichuli").html(result.data);
+            }else{
+              $(".weichuli").hide();
+            }
+          }
+       }
+     })
+   }
+   findWeichuli();
+   
+   function findRole() {
+     
    }
 
    //

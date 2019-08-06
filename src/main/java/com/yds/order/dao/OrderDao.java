@@ -34,4 +34,5 @@ public interface OrderDao {
 	
 	int getOrder(@Param("state")Integer state,@Param("id")Integer id);
 
+	int findWeichuli();
 }
